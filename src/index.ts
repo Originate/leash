@@ -20,11 +20,7 @@ export async function jsonAction(
   endpoint: string,
   body: unknown,
   readCookies: () => string,
-
-  // this actually returns a Promise<Response> but because this package spans node/dom there is some weirdness with
-  // compiling here
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
+): Promise<Response> {
   let options: RequestInit;
 
   if (method === 'GET' || method === 'HEAD') {
