@@ -11,5 +11,8 @@ First, [create a GitHub personal access token](https://github.com/settings/token
 Then add this to `~/.npmrc`:
 
 ```
-//npm.pkg.github.com/:_authToken=[your token here]
+@Originate:registry = https://npm.pkg.github.com
+
+_authToken=[your token here]
+always-auth=true
 ```
