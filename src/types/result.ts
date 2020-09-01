@@ -5,9 +5,9 @@ type Cookie = {
   httpOnly: boolean;
 };
 
-export interface GoodResult<T> {
+export interface GoodResult<TData> {
   cookies?: Array<Cookie>;
-  data: Array<T>;
+  data: TData;
 }
 
 export interface BadResult {
@@ -15,14 +15,14 @@ export interface BadResult {
   error?: string;
 }
 
-export type Result<T> = GoodResult<T> | BadResult;
+export type Result<TData> = GoodResult<TData> | BadResult;
 
-export function good<T>(t: T | Array<T>): Result<T> {
-  return {data: Array.isArray(t) ? t : [t]};
+export function good<TData>(data: TData): Result<TData> {
+  return {data};
 }
 
-export function goodWithSetCookie<T>(t: T | Array<T>, cookies: Array<Cookie>): Result<T> {
-  return {...good(t), cookies};
+export function goodWithSetCookie<TData>(data: TData, cookies: Array<Cookie>): Result<TData> {
+  return {...good(data), cookies};
 }
 
 export function bad(status: number, error?: string): Result<never> {

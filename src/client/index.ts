@@ -5,14 +5,14 @@ import {RequestError} from './request_error';
 
 export {RequestError} from './request_error';
 
-export class RouteClient<RouteResult, EndpointArg> {
+export class RouteClient<TRequest, TResponse> {
   constructor(
     private method: Method,
     public endpointTemplate: string,
-    public client: (arg: EndpointArg) => Promise<Array<RouteResult>>,
+    public client: (arg: TRequest) => Promise<TResponse>,
   ) {}
 
-  install = (app: Express, controllerMethod: ControllerMethod<RouteResult>): void => {
+  install = (app: Express, controllerMethod: ControllerMethod<TResponse>): void => {
     switch (this.method) {
       case 'HEAD':
         app.head(this.endpointTemplate, this.wrap(controllerMethod));
@@ -32,7 +32,7 @@ export class RouteClient<RouteResult, EndpointArg> {
     }
   };
 
-  private wrap(controllerMethod: ControllerMethod<RouteResult>) {
+  private wrap(controllerMethod: ControllerMethod<TResponse>) {
     return async (req: Request, res: Response) => {
       try {
         const result = await Promise.resolve(controllerMethod(req, res));

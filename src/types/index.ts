@@ -7,5 +7,5 @@ export * from './result';
 export type Method = 'HEAD' | 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export interface ControllerMethod<RouteResult> {
-  (req: Request, res: ExpressResponse): Result<RouteResult> | Promise<Result<RouteResult>>;
+  (req: Request, res: ExpressResponse): Promise<Result<RouteResult>>;
 }

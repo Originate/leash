@@ -15,51 +15,38 @@ export function readCookie(documentCookie: string, cookieName: string): string |
   return undefined;
 }
 
-export async function jsonAction(
+export async function fetchAsJSON(
   method: Method,
   endpoint: string,
   body: unknown,
-  readCookies: () => string,
 ): Promise<Response> {
   let options: RequestInit;
 
   if (method === 'GET' || method === 'HEAD') {
     options = {method};
   } else {
-    let csrfToken = readCookie(readCookies(), 'csrf_token');
-    if (!csrfToken) {
-      // Cookies were possibly cleared, attempt to re-fetch the csrf token
-      await fetch('/api/auth');
-      csrfToken = readCookie(readCookies(), 'csrf_token');
-
-      // Blow up if we still don't have a csrf token after a successful fetch
-      if (!csrfToken) throw Error('Cannot make non GET/HEAD request without a csrf_token set');
-    }
     options = {
       method,
       headers: {
         'content-type': 'application/json',
-        'csrf-token': csrfToken,
       },
       body: JSON.stringify(body),
     };
   }
 
   const result = await fetch(endpoint, options);
-
   if (result && result.status === 200) return result;
   else throw new RequestError(result.status, method, endpoint, await result.text());
 }
 
-function apiClient<EndpointArg, RouteResult>(
+function apiClient<TRequest, TResponse>(
   method: Method,
   endpointTemplate: string,
-  endpoint: DataToEndpoint<EndpointArg>,
-): (arg: EndpointArg) => Promise<Array<RouteResult>> {
-  return async (arg: EndpointArg) => {
-    const result = await jsonAction(method, endpoint(arg), arg, () => document.cookie);
-    const json: Result<RouteResult> = await result.json();
-
+  endpoint: DataToEndpoint<TRequest>,
+): (arg: TRequest) => Promise<TResponse> {
+  return async (arg: TRequest) => {
+    const result = await fetchAsJSON(method, endpoint(arg), arg);
+    const json: Result<TResponse> = await result.json();
     if ('status' in json)
       throw new RequestError(json.status, method, endpointTemplate, json.error || 'No error message returned');
     else return json.data;
@@ -67,10 +54,10 @@ function apiClient<EndpointArg, RouteResult>(
 }
 
 function createDynamicEndpoint(method: Method) {
-  return function <RouteResult, EndpointArg = void>(
+  return function <TRequest, TResponse>(
     endpointTemplate: string,
-    endpoint: DataToEndpoint<EndpointArg> = () => endpointTemplate,
-  ): RouteClient<RouteResult, EndpointArg> {
+    endpoint: DataToEndpoint<TRequest> = () => endpointTemplate,
+  ): RouteClient<TRequest, TResponse> {
     return new RouteClient(method, endpointTemplate, apiClient(method, endpointTemplate, endpoint));
   };
 }
