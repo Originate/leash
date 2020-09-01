@@ -15,11 +15,7 @@ export function readCookie(documentCookie: string, cookieName: string): string |
   return undefined;
 }
 
-export async function fetchAsJSON(
-  method: Method,
-  endpoint: string,
-  body: unknown,
-): Promise<Response> {
+export async function fetchAsJSON(method: Method, endpoint: string, body: unknown): Promise<Response> {
   let options: RequestInit;
 
   if (method === 'GET' || method === 'HEAD') {
