@@ -1,7 +1,7 @@
 {
   "name": "@Originate/leash",
   "types": "dist/index.d.ts",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {

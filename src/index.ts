@@ -2,6 +2,7 @@ import {Method, Result} from './types';
 import {RouteClient, RequestError} from './client';
 
 export * from './types';
+export {RouteClient} from './client';
 
 interface DataToEndpoint<Data> {
   (data: Data): string;
