@@ -3,6 +3,7 @@ import {RouteClient, RequestError} from './client';
 
 export * from './types';
 export {RouteClient} from './client';
+export {installMany} from './installMany';
 
 interface DataToEndpoint<Data> {
   (data: Data): string;
