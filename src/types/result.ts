@@ -12,6 +12,7 @@ export interface GoodResult<TData> {
 
 export interface BadResult {
   status: number;
+  key: string;
   error?: string;
 }
 
@@ -25,6 +26,6 @@ export function goodWithSetCookie<TData>(data: TData, cookies: Array<Cookie>): R
   return {...good(data), cookies};
 }
 
-export function bad(status: number, error?: string): Result<never> {
-  return {status, error};
+export function bad(status: number, key: string, error?: string): Result<never> {
+  return {status, key, error};
 }
